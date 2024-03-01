@@ -16,6 +16,7 @@ class Book(Base):
     pages: Mapped[str] = Column(String(4))
     publisher: Mapped[str] = Column(String(150))
     borrow_record: Mapped['BorrowRecord'] = relationship('BorrowRecord', back_populates='book', lazy='selectin')
+    book_review: Mapped['Review'] = relationship('Review', back_populates='book', lazy='selectin')
 
 class BaseAssociation(Base):
     __abstract__ = True
@@ -44,11 +45,20 @@ class BorrowRecord(BaseAssociation):
     due_date: Mapped[Date] = Column(Date())
     return_date: Mapped[Date] = Column(Date(), nullable=True)
 
+
 class Review(BaseAssociation):
     __tablename__ = "reviews"
     id: Mapped[int] = Column(Integer, primary_key=True)
     rating: Mapped[int] = Column(Integer)
     comment: Mapped[str] = Column(Text())
+
+    @declared_attr
+    def user(cls) -> Mapped['User']:
+        return relationship('User', back_populates='user_review', lazy='selectin')
+
+    @declared_attr
+    def book(cls) -> Mapped['Book']:
+        return relationship('Book', back_populates='book_review', lazy='selectin')
     __allow_unmapped__ = True
     __table_args__ = (
         CheckConstraint('rating >= 1', name='rating_min'),

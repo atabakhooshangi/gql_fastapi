@@ -19,6 +19,7 @@ class User(Base):
     is_active: Mapped[bool] = Column(Boolean(), default=True)
 
     borrow_record_user: Mapped['BorrowRecord'] = relationship('BorrowRecord', back_populates='user', lazy='selectin')
+    user_review: Mapped['Review'] = relationship('Review', back_populates='user', lazy='selectin')
 
     @validates('email')
     def validate_email(self, key, email):
