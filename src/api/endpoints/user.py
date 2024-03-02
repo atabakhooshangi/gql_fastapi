@@ -20,15 +20,16 @@ from sqlalchemy.orm import Session, noload, joinedload , load_only
 
 from db import get_db_session
 from models import User
+from schemas import UserSchema
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/user/", name="user:user")
+@router.post("/user/", name="user:user",response_model=List[UserSchema])
 async def user(
         db: AsyncSession = Depends(get_db_session),
 ):
-    q = await db.execute(select(User).options(load_only(User.id),noload(User.borrow_record_user),noload(User.user_review)))
-    result = q.scalars().all()
+    q = await db.execute(select(User).options(noload(User.borrow_record_user),noload(User.user_review)))
+    result = q.scalars().unique().all()
     return result

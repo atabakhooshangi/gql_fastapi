@@ -21,7 +21,7 @@ parser.add_argument('--reviews', type=int, help='Number of reviews to generate',
 parser.add_argument('--clear', action='store_true', help='Clear tables before generating new data')  # --clear
 parser.add_argument('--reset_indexes', action='store_true', help='Reset PostgreSQL sequence indexes')  # --reset_indexes
 
-#  python fake_data.py --users 100 --books 50 --borrow_records 20 --reviews 100 --clear --reset_indexes
+#  python fake_data.py --users 1000 --books 5000 --borrow_records 1500 --reviews 5500 --clear --reset_indexes
 args = parser.parse_args()
 
 # Database setup
@@ -33,32 +33,30 @@ session = Session()
 class GenerateFakeData:
 
     def create_fake_users(self, n):
-        users = []
-        for _ in range(n):
-            user = User(
+        users = [
+            User(
                 email=fake.email(),
-                hashed_password=fake.password(length=12),
+                password=fake.password(length=12),
                 first_name=fake.first_name(),
                 last_name=fake.last_name(),
                 birth_date=fake.date_of_birth(tzinfo=None, minimum_age=18, maximum_age=90),
                 is_active=fake.boolean()
-            )
-            users.append(user)
+            ) for _ in range(n)
+        ]
         session.add_all(users)
         session.commit()
 
     def create_fake_books(self, n):
-        books = []
-        for _ in range(n):
-            book = Book(
+        books = [
+            Book(
                 title=fake.sentence(nb_words=5),
                 author=fake.name(),
                 serial_number=fake.unique.bothify(text='???-########'),
                 date_published=fake.date_between(start_date='-30y', end_date='today'),
                 pages=str(fake.random_int(min=100, max=1000)),
                 publisher=fake.company()
-            )
-            books.append(book)
+            ) for _ in range(n)
+        ]
         session.add_all(books)
         session.commit()
 

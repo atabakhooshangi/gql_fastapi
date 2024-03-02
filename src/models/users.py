@@ -12,7 +12,7 @@ class User(Base):
     __allow_unmapped__ = True
     id: Mapped[int] = Column(Integer, primary_key=True)  # Assuming there's an ID column
     email: Mapped[str] = Column(String(100), index=True, unique=True)
-    hashed_password: Mapped[str] = Column(String(250))
+    password: Mapped[str] = Column(String(250))
     first_name: Mapped[str] = Column(String(150))
     last_name: Mapped[str] = Column(String(150))
     birth_date: Mapped[Date] = Column(Date())
