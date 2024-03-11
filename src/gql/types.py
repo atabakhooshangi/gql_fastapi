@@ -8,6 +8,8 @@ from models import User , BorrowRecord , Book, Review
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session, noload, joinedload , load_only
 
+from schemas import UserSchema
+
 
 class UserObject(ObjectType):
     id = Int()
@@ -25,11 +27,8 @@ class UserObject(ObjectType):
 
     @staticmethod
     async def resolve_user_review(root, info):
-        async with asynccontextmanager(get_db_session)() as db:
-            q = await db.execute(select(Review).options(noload(Review.user)).filter(Review.user_id == root.id))
-            result = q.scalars().unique().all()
-        # await db.close()
-        return result
+        s = root.user_reviews
+        return s
 
 class BookObject(ObjectType):
     id= Int()
@@ -46,6 +45,10 @@ class ReviewObject(ObjectType):
     rating = String()
     comment = String()
     book = Field(lambda:BookObject)
+
+    @staticmethod
+    async def resolve_user_review(root, info):
+        return root.book
 
 class BurrowObject(ObjectType):
     id = Int()

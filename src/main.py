@@ -4,13 +4,10 @@ from config import settings
 from db import sessionmanager
 from starlette_graphene3 import GraphQLApp, make_playground_handler
 from random import randint
-
 from starlette.middleware.sessions import SessionMiddleware
-
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-
-from gql.queries import gql_schema
+from gql import gql_schema
 
 
 @asynccontextmanager

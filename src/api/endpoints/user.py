@@ -30,6 +30,6 @@ logger = logging.getLogger(__name__)
 async def user(
         db: AsyncSession = Depends(get_db_session),
 ):
-    q = await db.execute(select(User).options(noload(User.borrow_record_user),noload(User.user_review)))
+    q = await db.execute(select(User).options(noload(User.borrow_records_user),joinedload(User.user_reviews)).limit(5))
     result = q.scalars().unique().all()
     return result

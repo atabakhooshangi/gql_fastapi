@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date, Text, CheckConstraint
 from sqlalchemy.orm import relationship, validates, declared_attr , Mapped
 
@@ -15,7 +17,7 @@ class Book(Base):
     date_published: Mapped[Date] = Column(Date())
     pages: Mapped[str] = Column(String(4))
     publisher: Mapped[str] = Column(String(150))
-    borrow_record: Mapped['BorrowRecord'] = relationship('BorrowRecord', back_populates='book', lazy='selectin')
+    borrow_records: Mapped[List['BorrowRecord']] = relationship('BorrowRecord', uselist=True, lazy='selectin')
     book_review: Mapped['Review'] = relationship('Review', back_populates='book', lazy='selectin')
 
 class BaseAssociation(Base):
@@ -32,11 +34,11 @@ class BaseAssociation(Base):
 
     @declared_attr
     def user(cls) -> Mapped['User']:
-        return relationship('User', back_populates='borrow_record_user', lazy='selectin')
+        return relationship('User', back_populates='borrow_records_user', lazy='selectin')
 
     @declared_attr
     def book(cls) -> Mapped['Book']:
-        return relationship('Book', back_populates='borrow_record', lazy='selectin')
+        return relationship('Book', back_populates='borrow_records', lazy='selectin')
 
 class BorrowRecord(BaseAssociation):
     __tablename__ = 'borrow_records'
@@ -52,13 +54,15 @@ class Review(BaseAssociation):
     rating: Mapped[int] = Column(Integer)
     comment: Mapped[str] = Column(Text())
 
+
     @declared_attr
     def user(cls) -> Mapped['User']:
-        return relationship('User', back_populates='user_review', lazy='selectin')
+        return relationship('User', back_populates='user_reviews', lazy='selectin')
 
     @declared_attr
     def book(cls) -> Mapped['Book']:
         return relationship('Book', back_populates='book_review', lazy='selectin')
+
     __allow_unmapped__ = True
     __table_args__ = (
         CheckConstraint('rating >= 1', name='rating_min'),
