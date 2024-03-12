@@ -1,23 +1,12 @@
 import logging
-from datetime import datetime
-from typing import Any, List
-
+from typing import List
 from fastapi import (
     APIRouter,
-    Body,
     Depends,
-    status,
-    HTTPException,
-    Request,
-    Response
 )
-
-from fastapi.responses import ORJSONResponse
-from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import Session, noload, joinedload , load_only
-
+from sqlalchemy.orm import noload, joinedload
 from db import get_db_session
 from models import User
 from schemas import UserSchema
