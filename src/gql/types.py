@@ -1,14 +1,6 @@
-from contextlib import asynccontextmanager
+from graphene import Int,String,Boolean , Date , Field
+from graphene import ObjectType, List
 
-from graphene import ObjectType,List , Int,String,Boolean , Date , Field
-from graphene import ObjectType, List , Schema
-
-from db import get_db_session
-from models import User , BorrowRecord , Book, Review
-from sqlalchemy.future import select
-from sqlalchemy.orm import Session, noload, joinedload , load_only
-
-from schemas import UserSchema
 
 
 class UserObject(ObjectType):
@@ -18,17 +10,16 @@ class UserObject(ObjectType):
     last_name = String()
     birth_date = Date()
     is_active = Boolean ()
-    # borrow_record_user = List(lambda: BurrowObject)
-    user_review = List(lambda: ReviewObject)
-
-    # @staticmethod
-    # def resolve_borrow_record_user(root,info):
-    #     return root.borrow_record_user
+    borrow_records_user = List(lambda: BurrowObject)
+    user_reviews = List(lambda: ReviewObject)
 
     @staticmethod
-    async def resolve_user_review(root, info):
-        s = root.user_reviews
-        return s
+    def resolve_borrow_records_user(root,info):
+        return root.borrow_records_user
+
+    @staticmethod
+    async def resolve_user_reviews(root, info):
+        return root.user_reviews
 
 class BookObject(ObjectType):
     id= Int()
@@ -38,7 +29,8 @@ class BookObject(ObjectType):
     date_published= Date()
     pages= String()
     publisher= String()
-
+    readers_avg_rating = Int()
+    average_borrowed_time = Int()
 
 class ReviewObject(ObjectType):
     id = Int()
@@ -54,6 +46,14 @@ class BurrowObject(ObjectType):
     id = Int()
     borrow_note = String()
     due_date = String()
-    return_date = Field(lambda:BookObject)
-    user = List(lambda: UserObject)
-    book = List(lambda: BookObject)
+    return_date = Date()
+    user = Field(lambda: UserObject)
+    book = Field(lambda: BookObject)
+
+    @staticmethod
+    def resolve_user(root,info):
+        return root.user
+
+    @staticmethod
+    async def resolve_book(root, info):
+        return root.book
