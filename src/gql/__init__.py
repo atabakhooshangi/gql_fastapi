@@ -1,6 +1,6 @@
 from graphene import Schema
 
 from .queries import Query
-from .mutate import Mutation
+from .mutate import MUTATE
 
-gql_schema = Schema(query=Query, mutation=Mutation)
+gql_schema = Schema(query=Query,**MUTATE)

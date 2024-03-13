@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_SCHEME: str
     BACKEND_CORS_ORIGINS: bool = True
+    ADD_MUTATION: int = 0
 
     SQLALCHEMY_ASYNC_DATABASE_URI: Optional[PostgresDsn] = None
 

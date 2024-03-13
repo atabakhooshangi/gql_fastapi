@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from graphene import Mutation, String, Int, Float, Date, Field , ObjectType
 
+from config import settings
 from db import get_db_session
 from gql.types import BookObject
 from models import Book
@@ -30,3 +31,5 @@ class AddBook(Mutation):
 
 class Mutation(ObjectType):
     add_book=AddBook.Field()
+
+MUTATE = {"mutation":Mutation} if settings.ADD_MUTATION == 1 else {}
