@@ -45,17 +45,17 @@ if settings.BACKEND_CORS_ORIGINS:
 
 app.include_router(api_router)
 
-app.mount("/gql/", GraphQLApp(
+app.mount("/", GraphQLApp(
     schema=gql_schema,
     on_get=make_playground_handler()
 ))
 
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=False
-    )
+# if __name__ == "__main__":
+#     import uvicorn
+#
+#     uvicorn.run(
+#         "main:app",
+#         host="0.0.0.0",
+#         port=8000,
+#         reload=False
+#     )
