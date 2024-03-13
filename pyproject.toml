@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "gql_fastapi"
+name = "library-gql"
 version = "0.1.0"
-description = "A graphql fast api project"
+description = "A graphql fastapi project"
 authors = ["Atabak Hooshangi", "1990.atabak.hooshangi@gmail.com"]
 license = "MIT"
 readme = "README.md"

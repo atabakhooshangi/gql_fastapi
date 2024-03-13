@@ -111,7 +111,12 @@ if __name__ == "__main__":
 
     if args.reset_indexes:  # Reset Index Sequences
         faker_instance.reset_postgres_indexes()
-    faker_instance.create_fake_users(args.users)
-    faker_instance.create_fake_books(args.books)
-    faker_instance.create_fake_borrow_records(args.borrow_records)
-    faker_instance.create_fake_reviews(args.reviews)
+
+    if args.users:
+        faker_instance.create_fake_users(args.users)
+    if args.books:
+        faker_instance.create_fake_books(args.books)
+    if args.borrow_records and args.users and args.books:
+        faker_instance.create_fake_borrow_records(args.borrow_records)
+    if args.reviews and args.users and args.books:
+        faker_instance.create_fake_reviews(args.reviews)
