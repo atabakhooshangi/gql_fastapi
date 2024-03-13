@@ -36,6 +36,25 @@ class ModelMapper:
         "id_in": Book.id,
     }
 
+    @staticmethod
+    def apply_pagination(query, skip=None, take=None):
+        """
+        Applies pagination to a SQLAlchemy query based on 'skip' (offset) and 'take' (limit) parameters.
+
+        Parameters:
+        - query: The SQLAlchemy query to modify.
+        - skip: Optional; number of records to skip (offset) for pagination.
+        - take: Optional; number of records to take (limit) for pagination.
+
+        Returns:
+        - The modified query with pagination applied.
+        """
+        if skip is not None:
+            query = query.offset(skip)
+        if take is not None:
+            query = query.limit(take)
+        return query
+
     @classmethod
     def get_filter_exp(cls, query_params: dict, mapper_name: str):
         """
@@ -62,18 +81,18 @@ class ModelMapper:
                 filter_expressions.append(mapper[param] == value)
 
         return filter_expressions
+    @staticmethod
+    def ordering(order: str):
+        """
+        Determines the SQLAlchemy ordering based on the provided string.
 
-def ordering(order: str):
-    """
-    Determines the SQLAlchemy ordering based on the provided string.
+        Parameters:
+        - order: A string indicating the ordering direction and field, prefixed with '-' for descending.
 
-    Parameters:
-    - order: A string indicating the ordering direction and field, prefixed with '-' for descending.
-
-    Returns:
-    - An SQLAlchemy ordering expression.
-    """
-    return desc(order[1:]) if order.startswith('-') else asc(order)
+        Returns:
+        - An SQLAlchemy ordering expression.
+        """
+        return desc(order[1:]) if order.startswith('-') else asc(order)
 
 class Query(ObjectType):
     """
@@ -82,29 +101,41 @@ class Query(ObjectType):
 
     # Users query with arguments for filtering and sorting.
     users = List(UserObject,
-                 is_active=Argument(Boolean, required=False, default_value=True),
+                 is_active=Argument(Boolean, required=False),
                  first_name=Argument(String, required=False),
                  last_name=Argument(String, required=False),
                  email=Argument(String, required=False),
                  id_in=Argument(List(Int), required=False),
-                 order_by=Argument(String, required=False, default_value='id'))
+                 limit=Argument(Int, required=False, default_value=100),
+                 offset=Argument(Int, required=False, default_value=1),
+                 order_by=Argument(String, required=False, default_value='id'),
+                 skip=Argument(Int, required=False, default_value=0, description="Number of records to skip"),
+                 take=Argument(Int, required=False, default_value=50, description="Number of records to take"),
+                 )
 
     # Single user query with ID or email as argument.
     user = Field(UserObject,
                  id=Int(required=False),
-                 email=Argument(String, required=False))
+                 email=Argument(String, required=False)
+                 )
 
     # Borrow records query with filtering and sorting arguments.
     borrows_records = List(BurrowObject,
                            book_id_in=Argument(List(Int), required=False),
                            user_id_in=Argument(List(Int), required=False),
-                           order_by=Argument(String, required=False, default_value='created_at'))
+                           order_by=Argument(String, required=False, default_value='created_at'),
+                           skip=Argument(Int, required=False, default_value=0, description="Number of records to skip"),
+                           take=Argument(Int, required=False, default_value=50, description="Number of records to take"),
+                           )
 
     # Books query with arguments for filtering.
     books = List(BookObject,
                  author=Argument(String, required=False),
                  title=Argument(String, required=False),
-                 id_in=Argument(List(Int), required=False))
+                 id_in=Argument(List(Int), required=False),
+                 skip=Argument(Int, required=False,default_value=0, description="Number of records to skip"),
+                 take=Argument(Int, required=False, default_value=50,description="Number of records to take"),
+                 )
 
     @staticmethod
     async def resolve_books(root, info, **kwargs):
@@ -113,8 +144,10 @@ class Query(ObjectType):
 
         Returns a list of Book objects with additional computed fields for average rating and borrowed time.
         """
+        skip = kwargs.pop('skip')
+        take = kwargs.pop('take')
         async with asynccontextmanager(get_db_session)() as db:
-            query = select(
+            base_query = select(
                 # Dynamically select all Book attributes.
                 *[getattr(Book, column.name) for column in inspect(Book).c],
                 # Calculate the average rating.
@@ -128,8 +161,8 @@ class Query(ObjectType):
             ).outerjoin(BorrowRecord, Book.id == BorrowRecord.book_id
             ).filter(*ModelMapper.get_filter_exp(kwargs, 'BOOK_MAPPER')
             ).group_by(Book.id)
-
-            result = await db.execute(query)
+            paginated_query = ModelMapper.apply_pagination(base_query,skip,take)
+            result = await db.execute(paginated_query)
             return result.all()
 
     @staticmethod
@@ -138,14 +171,17 @@ class Query(ObjectType):
         Resolves the users query to fetch user entities with optional filters and sorting applied.
         """
         order = kwargs.pop('order_by')
+        skip = kwargs.pop('skip')
+        take = kwargs.pop('take')
+        print(kwargs)
         async with asynccontextmanager(get_db_session)() as db:
-            query = select(User).options(
+            base_query = select(User).options(
                 joinedload(User.borrow_records_user),
                 joinedload(User.user_reviews)
             ).filter(*ModelMapper.get_filter_exp(kwargs, 'USER_MAPPER')
-            ).order_by(ordering(order))
-
-            result = await db.execute(query)
+            )
+            paginated_query = ModelMapper.apply_pagination(base_query, skip, take)
+            result = await db.execute(paginated_query.order_by(ModelMapper.ordering(order)))
             return result.scalars().unique().all()
 
     @staticmethod
@@ -170,12 +206,14 @@ class Query(ObjectType):
         Resolves the borrows_records query to fetch borrowing records with optional filters and sorting.
         """
         order = kwargs.pop('order_by')
+        skip = kwargs.pop('skip')
+        take = kwargs.pop('take')
         async with asynccontextmanager(get_db_session)() as db:
-            query = select(BorrowRecord).options(
+            base_query = select(BorrowRecord).options(
                 joinedload(BorrowRecord.user),
                 joinedload(BorrowRecord.book)
             ).filter(*ModelMapper.get_filter_exp(kwargs, 'BORROW_MAPPER')
-            ).order_by(ordering(order))
-
-            result = await db.execute(query)
+            ).order_by(ModelMapper.ordering(order))
+            paginated_query = ModelMapper.apply_pagination(base_query, skip, take)
+            result = await db.execute(paginated_query)
             return result.scalars().unique().all()

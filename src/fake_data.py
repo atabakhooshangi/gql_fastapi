@@ -35,7 +35,7 @@ class GenerateFakeData:
     def create_fake_users(self, n):
         users = [
             User(
-                email=fake.email(),
+                email=fake.unique.ascii_free_email(),
                 password=fake.password(length=12),
                 first_name=fake.first_name(),
                 last_name=fake.last_name(),
