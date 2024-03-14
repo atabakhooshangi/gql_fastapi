@@ -97,6 +97,91 @@ python main.py
 
 Navigate to the host and port you have configured (e.g., `http://localhost:8000`) to access the GraphQL API interface.
 
+## Sample GraphQL Queries Usage
+
+### Fetching Users
+
+To fetch users with optional filtering by `isActive`, `firstName`, `lastName`, `email`, and pagination controls (`skip`, `take`), you can use the following query:
+
+```graphql
+query {
+  users(isActive: true, skip: 0, take: 10) {
+    id
+    email
+    firstName
+    lastName
+    isActive
+  }
+}
+```
+
+### Fetching a Single User
+
+To fetch a single user by `id` or `email`:
+
+```graphql
+query {
+  user(id: 1) {
+    id
+    email
+    firstName
+    lastName
+    borrowRecordsUser {
+      borrowNote
+      dueDate
+      returnDate
+    }
+    userReviews {
+      rating
+      comment
+    }
+  }
+}
+```
+
+### Fetching Borrow Records
+
+To retrieve borrow records with optional filtering by `bookIdIn`, `userIdIn`, and pagination controls (`skip`, `take`):
+
+```graphql
+query {
+  borrowsRecords(bookIdIn: [1, 2], skip: 0, take: 5) {
+    id
+    borrowNote
+    dueDate
+    returnDate
+    user {
+      id
+      email
+    }
+    book {
+      title
+      author
+    }
+  }
+}
+```
+
+### Fetching Books
+
+To list books with optional filtering by `author`, `title`, and pagination controls (`skip`, `take`):
+
+```graphql
+query {
+  books(author: "J.K. Rowling", skip: 0, take: 10) {
+    id
+    title
+    author
+    readersAvgRating
+    averageBorrowedTime
+  }
+}
+```
+
+Each of these queries can be executed against your GraphQL endpoint to retrieve data from your book library application. Adjust the filter values and pagination controls as needed based on your data and requirements.
+
+
+
 ## Additional Information
 
 - Ensure the `.env` file is correctly placed and filled with your actual database and application settings.
