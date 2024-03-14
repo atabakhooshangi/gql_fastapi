@@ -182,7 +182,7 @@ Each of these queries can be executed against your GraphQL endpoint to retrieve 
 
 ## Exploring the API with GraphQL Playground
 
-The GraphQL Playground provides an interactive UI to explore the API's schema and documentation. After starting the application and navigating to the GraphQL endpoint (`http://localhost:8000/`), you'll find the "Docs" and "Schema" sections on the right side of the playground. These sections offer a comprehensive overview of the available queries, mutations, and their respective fields, arguments, and types.
+<p>The GraphQL Playground provides an interactive UI to explore the API's schema and documentation. After starting the application and navigating to the GraphQL endpoint (`http://localhost:8000/`), You'll find the <span style="color: red;">"Docs"</span> and <span style="color: blue;">"Schema"</span> sections on the right side of the playground.These sections offer a comprehensive overview of the available queries, mutations, and their respective fields, arguments, and types. </p>
 
 This feature is incredibly useful for understanding the capabilities of the API and for experimenting with queries and mutations in real-time.
 
