@@ -1,49 +1,77 @@
 
-# A Book Library
+# GraphQL-Powered Book Library Application
 
-This sample project demonstrates a functional book library system, designed as an educational example.
-It utilizes GraphQL and Graphene for crafting API queries and mutations,
-with FastAPI as the web framework to serve these APIs. The system manages data related to users,
-books, borrow records, and reviews. Async SQLAlchemy is employed for database interactions,
-showcasing asynchronous operations for improved efficiency.
-Alembic is included for database migrations, 
-facilitating easy adjustments to the database schema.
+This is a simple educational sample application for managing a book library system. It demonstrates the use of GraphQL with Graphene and FastAPI for creating a backend API. The application also showcases asynchronous database interactions using Async SQLAlchemy and employs Alembic for database migrations.
 
-
-## Getting Started
-
-These instructions will get your project up and running on your local machine for development and testing purposes.
+## Setup Instructions
 
 ### Prerequisites
 
-What things you need to install the software and how to install them. This might include software like Python, Poetry, etc.
+- Python 3.11
+- PostgreSQL database.
+- `poetry` for Python package and environment management.
 
-```
-python --version
-poetry --version
-```
+### Configuration
 
-### Installing
+1. **Set up the Python environment**:
 
-A step-by-step series of examples that tell you how to get a development environment running. This should cover cloning the repo, installing dependencies via Poetry, and any other necessary steps.
+   Use Poetry to configure the virtual environment and install dependencies:
 
-```
-git clone https://yourproject.git
-cd yourproject
-poetry install
-```
+   ```bash
+   poetry config virtualenvs.in-project true  # this will make poetry add the env folder to the directory of your toml file.
+   poetry install
+   poetry shell
+   ```
 
-## Setting Up the Database
+   Alternatively, if you prefer using `pip`, there is  a `requirements.txt` file in the `src` folder you can install the dependencies like:
 
-Instructions for setting up your database, including running Alembic migrations to create or update the database schema.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```
-alembic upgrade head
-```
+2. **Configure environment variables**:
 
-### Generating Fake Data
+   Create a `.env` file inside the `config` folder and add your PostgreSQL database credentials and application configuration:
 
-To populate your database with fake data for testing, use the `fake_data.py` script. This script allows you to specify the number of users, books, borrow records, and reviews to create. Additionally, you can use the `--clear` flag to clean up the database and the `--reset_indexes` flag to reset all indexes, which creates a fresh database and adds the new fake data.
+   ```plaintext
+   POSTGRES_USER=your-postgres-user
+   POSTGRES_PASSWORD=your-postgres-password
+   POSTGRES_SERVER=your-postgres-host
+   POSTGRES_PORT=your-db-port
+   POSTGRES_DB=your-db-name
+   POSTGRES_SCHEME=postgresql+asyncpg
+   ADD_MUTATION=0
+   SERVER_PORT=your-desired-port
+   RELOAD=True # or False
+   ```
+
+### Database Migrations
+
+After creating and configuring your database connection, prepare the database for migrations:
+
+1. Navigate to the `src` folder:
+
+   ```bash
+   cd src
+   ```
+
+2. Generate a new migration if there is any model change:
+
+   ```bash
+   alembic revision --autogenerate
+   ```
+
+3. Apply the migrations to your database:
+
+   ```bash
+   alembic upgrade head
+   ```
+
+   If the `versions` folder does not exist, It will automatically generate a versions folder in the `alembic` directory.
+
+### Populating the Database with Fake Data
+
+To populate your database with fake data:
 
 ```bash
 python fake_data.py --users 1000 --books 5000 --borrow_records 1500 --reviews 5500 --clear --reset_indexes
@@ -56,46 +84,25 @@ python fake_data.py --users 1000 --books 5000 --borrow_records 1500 --reviews 55
 - `--clear`: Cleans up the database before inserting new data.
 - `--reset_indexes`: Resets all indexes and creates a fresh database before inserting new data.
 
-## Running the Server
 
-How to run the server locally.
+Adjust the numbers according to your needs.
 
-```
-poetry run uvicorn app.main:app --reload
-```
+### Running the Application
 
-## Running Tests
+To run the application:
 
-Explain how to run the automated tests for this system.
-
-```
-poetry run pytest
+```bash
+python main.py
 ```
 
-## Deployment
+Navigate to the host and port you have configured (e.g., `http://localhost:8000`) to access the GraphQL API interface.
 
-Notes about how to deploy this on a live system.
+## Additional Information
 
-## Contributing
+- Ensure the `.env` file is correctly placed and filled with your actual database and application settings.
+- The `ADD_MUTATION=0` in the `.env` file can be adjusted based on your requirements to enable or disable specific mutations.
 
-Please read [CONTRIBUTING.md](https://yourproject.github.io/contributing) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://yourproject.github.io/tags).
 
 ## Authors
 
-* **Your Name** - *Initial work* - [YourProfile](https://github.com/YourProfile)
-
-See also the list of [contributors](https://yourproject.github.io/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc.
+* Atabak The NePhaLeM - *Initial work* - https://github.com/atabakhooshangi/gql_fastapi

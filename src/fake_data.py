@@ -108,10 +108,8 @@ if __name__ == "__main__":
     faker_instance = GenerateFakeData()
     if args.clear:  # Truncate Tables
         faker_instance.clear_tables()
-
-    if args.reset_indexes:  # Reset Index Sequences
-        faker_instance.reset_postgres_indexes()
-
+        if args.reset_indexes:  # Reset Index Sequences
+            faker_instance.reset_postgres_indexes()
     if args.users:
         faker_instance.create_fake_users(args.users)
     if args.books:
