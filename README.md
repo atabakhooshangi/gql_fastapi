@@ -1,7 +1,7 @@
 
 # GraphQL-Powered Book Library Application
 
-This is a simple educational sample application for managing a book library system. It demonstrates the use of GraphQL with Graphene and FastAPI for creating a backend API. The application also showcases asynchronous database interactions using Async SQLAlchemy and employs Alembic for database migrations.
+This is an educational sample application for managing a book library system. It demonstrates the use of GraphQL with Graphene and FastAPI for creating a backend API. The application also showcases asynchronous database interactions using Async SQLAlchemy and employs Alembic for database migrations.
 
 ## Setup Instructions
 
