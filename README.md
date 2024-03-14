@@ -107,6 +107,6 @@ Navigate to the host and port you have configured (e.g., `http://localhost:8000`
 
 * Atabak The NePhaLeM - *Initial work* - https://github.com/atabakhooshangi/gql_fastapi
 
-### Deployed Version
+## Deployed Version
 
 * You can find this application deployed on vercel using Heroku Postgres DB here : https://library-gql-nephalem.vercel.app/
