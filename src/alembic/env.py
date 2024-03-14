@@ -50,8 +50,17 @@ def get_url():
     password = settings.POSTGRES_PASSWORD
     server = settings.POSTGRES_SERVER
     db = settings.POSTGRES_DB
-    return f"postgresql+psycopg://{user}:{password}@{server}/{db}"
+    port = settings.POSTGRES_PORT
+    return f"postgresql+psycopg://{user}:{password}@{server}:{port}/{db}"
 
+
+def create_alembic_versions_folder():
+    alembic_versions_path = 'alembic/versions'  # Adjust this path if your Alembic setup is located differently
+    if not os.path.exists(alembic_versions_path):
+        os.makedirs(alembic_versions_path)
+        print(f"Created missing '{alembic_versions_path}' directory for Alembic migrations.")
+    else:
+        print(f"'{alembic_versions_path}' directory already exists.")
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
@@ -65,7 +74,7 @@ def run_migrations_offline():
     script output.
 
     """
-
+    create_alembic_versions_folder()
     url = get_url()
     context.configure(
         url=url, target_metadata=target_metadata, literal_binds=True, compare_type=True
@@ -82,7 +91,7 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-
+    create_alembic_versions_folder()
     DB_URL = get_url()
 
     configuration = config.get_section(config.config_ini_section)

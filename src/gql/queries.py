@@ -173,7 +173,6 @@ class Query(ObjectType):
         order = kwargs.pop('order_by')
         skip = kwargs.pop('skip')
         take = kwargs.pop('take')
-        print(kwargs)
         async with asynccontextmanager(get_db_session)() as db:
             base_query = select(User).options(
                 joinedload(User.borrow_records_user),
