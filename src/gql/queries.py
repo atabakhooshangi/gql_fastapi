@@ -192,7 +192,7 @@ class Query(ObjectType):
             raise Exception('Either one of id or email should be given')
         async with asynccontextmanager(get_db_session)() as db:
             query = select(User).options(
-                noload(User.borrow_records_user),
+                joinedload(User.borrow_records_user),
                 joinedload(User.user_reviews)
             ).filter(*[ModelMapper.USER_MAPPER[key] == val for key, val in kwargs.items()])
 
