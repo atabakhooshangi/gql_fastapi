@@ -15,10 +15,10 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/user/", name="user:user",response_model=List[UserSchema])
+@router.get("/users-list/", name="user:users-list",response_model=List[UserSchema])
 async def user(
         db: AsyncSession = Depends(get_db_session),
 ):
-    q = await db.execute(select(User).options(noload(User.borrow_records_user),joinedload(User.user_reviews)).limit(5))
+    q = await db.execute(select(User).options(noload(User.borrow_records_user),joinedload(User.user_reviews)).limit(50))
     result = q.scalars().unique().all()
     return result
