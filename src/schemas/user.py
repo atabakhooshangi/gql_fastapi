@@ -4,6 +4,7 @@ from pydantic import EmailStr
 
 from schemas.base import BaseSchema
 from pydantic import BaseModel
+
 class ReviewSchema(BaseModel):
     id:int
     # comment : str
@@ -14,10 +15,10 @@ class ReviewSchema(BaseModel):
 class UserSchema(BaseSchema):
     # id: int
     email : EmailStr
-    # first_name:str
-    # last_name:str
-    # birth_date:date
-    # is_active : bool
+    first_name:str
+    last_name:str
+    birth_date:date
+    is_active : bool
     user_reviews : List[ReviewSchema] = []
 
     class Config:
