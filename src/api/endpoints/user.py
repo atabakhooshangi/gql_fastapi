@@ -15,7 +15,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.get("/users-list/", name="user:users-list",response_model=List[UserSchema])
+@router.post("/users-list/", name="user:users-list",response_model=List[UserSchema])
 async def user(
         db: AsyncSession = Depends(get_db_session),
 ):
