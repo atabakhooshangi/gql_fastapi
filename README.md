@@ -69,6 +69,8 @@ After creating and configuring your database connection, prepare the database fo
 
    If the `versions` folder does not exist, It will automatically generate a versions folder in the `alembic` directory.
 
+
+
 ### Populating the Database with Fake Data
 
 To populate your database with fake data:
@@ -94,8 +96,20 @@ To run the application:
 ```bash
 python main.py
 ```
+or
+```bash
+docker compose up --build
+```
 
-Navigate to the host and port you have configured (e.g., `http://localhost:8000`) to access the GraphQL API interface.
+Navigate to the host and port you have configured (e.g., `http://localhost:{8888 or given port}`) to access the GraphQL API interface.
+
+### Deployment on vercel
+Vercel Dashboard steps :
+1. Log into Vercel and create a new project.
+2. import the repo in Vercel, select the repo and click on Import
+3. Configure the Project, give a proper name and if you want to pass secrets, give it in Environment Variable section
+
+You will be given a URL(editable) which your project is deployed on.
 
 ## Sample GraphQL Queries Usage
 
