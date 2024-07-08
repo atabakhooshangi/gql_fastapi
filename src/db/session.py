@@ -63,5 +63,6 @@ sessionmanager = DatabaseSessionManager(settings.get_async_connection_url())
 
 
 async def get_db_session():
+    print(sessionmanager)
     async with sessionmanager.session() as session:
         yield session
